@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= title %></title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+      <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+  <form class="levelUp"
+        method="POST"
+        action="<%= parentDirUrl %>"
+  >
+      <input type="hidden" name="_method" value="GET"/>
+      <button type="submit" class="btn btn-info">Level Up</button>
+  </form>
+  <br/>
+  <br/>
+    <h1><%= title %></h1>
+    <ul class="list-group d-flex flex-column justify-content-center ">
+      <% for (let [dirEntryName, metaData] of Object.entries(filesTree)) { %>
+          <li class="list-group-item d-flex flex-row justify-content-start">
+                <a class="p-4 bd-highlight" href="<%= metaData.link %>">
+                    <%= dirEntryName %>
+                    <%= metaData.icon %>
+                </a>
+
+              <form class="delete-file-form p-4 bd-highlight"
+                    method="POST" action="<%= metaData.link %>"
+              >
+                  <button type="submit" class="btn btn-dark">Duplicate</button>
+              </form>
+
+              <form class="delete-file-form p-4 bd-highlight"
+                    method="POST" action="<%= metaData.link %>"
+              >
+                  <input type="hidden" name="_method" value="DELETE"/>
+                  <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+
+          </li>
+      <% } %>
+    </ul>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </body>
+</html>
