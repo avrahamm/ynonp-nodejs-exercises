@@ -12,6 +12,6 @@ cd ynonp-nodejs-exercises\26-express\files-explorer\files-ex <br/>
 npm i <br/>
 node ./bin/www <br/>
 <br/>
-open localhost:3000 <br/>
+open localhost:3000/directory <br/>
 
 
