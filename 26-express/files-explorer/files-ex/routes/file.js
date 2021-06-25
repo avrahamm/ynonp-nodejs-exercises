@@ -6,7 +6,7 @@ const {getCopiedTargetRealPath} = require('../lib/utils/files');
 
 router.get('/', function(req, res, next) {
     try {
-      const data = fs.readFileSync(res.locals.curFilePath, 'utf8');
+      const data = fs.readFileSync(res.locals.curFileRealPath, 'utf8');
       res.send(data);
     } catch(err) {
       console.log(err);

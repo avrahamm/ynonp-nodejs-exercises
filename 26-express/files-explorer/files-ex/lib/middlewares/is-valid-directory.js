@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const createError = require('http-errors');
 
 const {getCurTargetRealPath, getTargetPathParentDir} = require('../utils/files');
 
@@ -14,5 +15,5 @@ module.exports = function(req, res, next) {
     }
 
     // it is not valid directory
-    return next(`path = ${req.query.path} is not valid directory`);
+    return next(createError(501,`path = ${req.query.path} is not valid directory`));
 }

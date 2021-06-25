@@ -1,9 +1,10 @@
 const fs = require('fs-extra');
+const createError = require('http-errors');
 
 const {getCurTargetRealPath, getTargetPathParentDir} = require('../utils/files');
 
 module.exports = function(req, res, next) {
-    console.log('is_valid-directory, req.query = ',req.query);
+    console.log('is_valid-file, req.query = ',req.query);
     let curFileRealPath = getCurTargetRealPath(req);
 
     if (fs.existsSync(curFileRealPath) && fs.lstatSync(curFileRealPath).isFile() ) {
@@ -14,5 +15,5 @@ module.exports = function(req, res, next) {
     }
 
     // it is not valid directory
-    return next(`path = ${req.query.path} is not valid file`);
+    return next(createError(501,`path = ${req.query.path} is not valid file`));
 }
