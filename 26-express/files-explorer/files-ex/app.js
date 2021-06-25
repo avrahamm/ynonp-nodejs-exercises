@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const errorsLogger = require('./lib/utils/logger');
 const methodOverride = require('method-override');
 
 const isValidDirectory = require('./lib/middlewares/is-valid-directory');
@@ -50,6 +51,9 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
+  if (err) {
+    errorsLogger.error(JSON.stringify(err));
+  }
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

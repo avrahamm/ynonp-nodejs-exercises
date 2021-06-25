@@ -15,5 +15,5 @@ module.exports = function(req, res, next) {
     }
 
     // it is not valid directory
-    return next(createError(501,`path = ${req.query.path} is not valid directory`));
+    return next(createError(501,`/directory/?path=${req.query.path} is not valid directory`));
 }
