@@ -4,6 +4,9 @@ const fs = require('fs-extra');
 
 const {getCopiedTargetRealPath} = require('../lib/utils/files');
 
+const isValidTarget = require('../lib/middlewares/is-valid-target');
+router.use('/', isValidTarget);
+
 router.get('/', function(req, res, next) {
     try {
       const data = fs.readFileSync(res.locals.curFileRealPath, 'utf8');

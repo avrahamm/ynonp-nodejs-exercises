@@ -6,10 +6,7 @@ var logger = require('morgan');
 const errorsLogger = require('./lib/utils/logger');
 const methodOverride = require('method-override');
 
-const isValidDirectory = require('./lib/middlewares/is-valid-directory');
-const isValidFile = require('./lib/middlewares/is-valid-file');
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 const directoryRouter = require('./routes/directory');
 const fileRouter = require('./routes/file');
 
@@ -36,11 +33,7 @@ app.use(methodOverride(function (req, res) {
   }
 }));
 
-app.use('/directory', isValidDirectory);
-app.use('/file', isValidFile);
-
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/directory', directoryRouter);
 app.use('/file', fileRouter);
 

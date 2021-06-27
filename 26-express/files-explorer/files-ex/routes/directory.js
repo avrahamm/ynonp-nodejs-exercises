@@ -6,6 +6,9 @@ const {
   treeRecSync, getCopiedTargetRealPath
 } = require('../lib/utils/files');
 
+const isValidTarget = require('../lib/middlewares/is-valid-target');
+router.use('/', isValidTarget);
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   const queryPath = req.query.path || "";

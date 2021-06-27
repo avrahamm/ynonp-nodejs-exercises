@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
+const url = require('url');
 const {rootPath} = require('./constants');
 
 /**
@@ -15,6 +16,34 @@ function getCurTargetRealPath(req)
         curTargetPath += queryPath;
     }
     return curTargetPath;
+}
+
+function getResourceFromUrl(req)
+{
+    const parsedUrl = url.parse(req.originalUrl, true);
+    console.log('parsedUrl = ', parsedUrl);
+    return parsedUrl.pathname;
+}
+function doesResourceExist(curTargetRealPath)
+{
+    return fs.existsSync(curTargetRealPath);
+}
+function isResourceTypeConsistent(resourceType, curTargetRealPath)
+{
+    if (resourceType === '/file/') {
+        return fs.lstatSync(curTargetRealPath).isFile();
+    }
+
+    // root directory
+    if (resourceType === '/directory') {
+        return true;
+    }
+
+    if (resourceType === '/directory/') {
+        return fs.lstatSync(curTargetRealPath).isDirectory();
+    }
+
+    return false;
 }
 
 function getTargetPathParentDir(req)
@@ -87,6 +116,9 @@ function getCopiedTargetRealPath(sourceRealPath)
 module.exports = {
 
     getCurTargetRealPath,
+    getResourceFromUrl,
+    doesResourceExist,
+    isResourceTypeConsistent,
     getTargetPathParentDir,
     treeRecSync,
     getCopiedTargetRealPath,
