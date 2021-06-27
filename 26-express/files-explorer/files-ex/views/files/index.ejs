@@ -24,13 +24,13 @@
                     <%= metaData.icon %>
                 </a>
 
-              <form class="delete-file-form p-4 bd-highlight"
+              <form class="duplicate-target-form p-4 bd-highlight"
                     method="POST" action="<%= metaData.link %>"
               >
                   <button type="submit" class="btn btn-dark">Duplicate</button>
               </form>
 
-              <form class="delete-file-form p-4 bd-highlight"
+              <form class="delete-target-form p-4 bd-highlight"
                     method="POST" action="<%= metaData.link %>"
               >
                   <input type="hidden" name="_method" value="DELETE"/>

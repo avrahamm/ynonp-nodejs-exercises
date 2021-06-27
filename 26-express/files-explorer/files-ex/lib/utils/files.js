@@ -21,7 +21,7 @@ function getCurTargetRealPath(req)
 function getResourceFromUrl(req)
 {
     const parsedUrl = url.parse(req.originalUrl, true);
-    console.log('parsedUrl = ', parsedUrl);
+    // console.log('parsedUrl = ', parsedUrl);
     return parsedUrl.pathname;
 }
 function doesResourceExist(curTargetRealPath)
@@ -84,7 +84,7 @@ function treeRecSync(queryPath='') {
         return result;
     } catch (err) {
         console.error(err);
-        // logger.error(err);
+        throw err;
     }
 }
 

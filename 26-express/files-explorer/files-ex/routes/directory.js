@@ -11,30 +11,38 @@ router.use('/', isValidTarget);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  const queryPath = req.query.path || "";
-  let filesTree = treeRecSync(queryPath);
-  res.render('files/index', {
-    title: 'Files Tree',
-    filesTree: filesTree
-  });
+  try {
+    const queryPath = req.query.path || "";
+    let filesTree = treeRecSync(queryPath);
+    res.render('files/index', {
+      title: 'Files Tree',
+      filesTree: filesTree
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+
 });
 
 router.post('/', function(req, res, next) {
   try {
-    const copiedTargetRealPath = getCopiedTargetRealPath(res.locals.curDirRealPath);
-    fs.copySync(res.locals.curDirRealPath, copiedTargetRealPath);
+    const copiedTargetRealPath = getCopiedTargetRealPath(res.locals.curTargetRealPath);
+    fs.copySync(res.locals.curTargetRealPath, copiedTargetRealPath);
     res.redirect(res.locals.parentDirUrl);
   } catch(err) {
     console.log(err);
+    next(err);
   }
 });
 
 router.delete('/', function(req, res, next) {
   try {
-    fs.removeSync(res.locals.curDirRealPath);
+    fs.removeSync(res.locals.curTargetRealPath);
     res.redirect(res.locals.parentDirUrl);
   } catch(err) {
     console.log(err);
+    next(err);
   }
 });
 

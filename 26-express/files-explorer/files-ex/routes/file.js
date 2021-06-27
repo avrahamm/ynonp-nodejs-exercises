@@ -9,7 +9,7 @@ router.use('/', isValidTarget);
 
 router.get('/', function(req, res, next) {
     try {
-      const data = fs.readFileSync(res.locals.curFileRealPath, 'utf8');
+      const data = fs.readFileSync(res.locals.curTargetRealPath, 'utf8');
       res.send(data);
     } catch(err) {
       console.log(err);
@@ -18,8 +18,8 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
     try {
-        const copiedTargetFileRealPath = getCopiedTargetRealPath(res.locals.curFileRealPath);
-        fs.copySync(res.locals.curFileRealPath, copiedTargetFileRealPath);
+        const copiedTargetFileRealPath = getCopiedTargetRealPath(res.locals.curTargetRealPath);
+        fs.copySync(res.locals.curTargetRealPath, copiedTargetFileRealPath);
         res.redirect(res.locals.parentDirUrl);
     } catch(err) {
         console.log(err);
@@ -28,7 +28,7 @@ router.post('/', function(req, res, next) {
 
 router.delete('/', function(req, res, next) {
     try {
-        fs.unlinkSync(res.locals.curFileRealPath);
+        fs.unlinkSync(res.locals.curTargetRealPath);
         res.redirect(res.locals.parentDirUrl);
     } catch(err) {
         console.log(err);

@@ -16,7 +16,7 @@ module.exports = function(req, res, next) {
 
     if (doesResourceExist(curTargetRealPath) &&
         isResourceTypeConsistent(resourceType, curTargetRealPath) ) {
-        res.locals.curFileRealPath = curTargetRealPath;
+        res.locals.curTargetRealPath = curTargetRealPath;
         const pathParentDir = getTargetPathParentDir(req);
         res.locals.parentDirUrl = `/directory/?path=${pathParentDir}`;
         return next();

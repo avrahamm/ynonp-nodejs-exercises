@@ -6,7 +6,6 @@ var logger = require('morgan');
 const errorsLogger = require('./lib/utils/logger');
 const methodOverride = require('method-override');
 
-var indexRouter = require('./routes/index');
 const directoryRouter = require('./routes/directory');
 const fileRouter = require('./routes/file');
 
@@ -33,9 +32,11 @@ app.use(methodOverride(function (req, res) {
   }
 }));
 
-app.use('/', indexRouter);
 app.use('/directory', directoryRouter);
 app.use('/file', fileRouter);
+app.use('/', function(req, res, next) {
+  res.redirect('/directory');
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
