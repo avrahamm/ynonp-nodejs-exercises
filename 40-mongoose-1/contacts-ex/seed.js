@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 const faker = require('faker');
 const Contact = require('./models/contact');
+const {connectionOptions} = require('./mongo-utils');
 
 async function seedContacts() {
-    const connection = await mongoose.connect('mongodb://localhost/40-contacts-ex',
-        {useNewUrlParser: true, useUnifiedTopology: true});
-
-    const numberOfContacts = 4;// process.argv[2] || 4;
+    const connection = await mongoose.connect(
+        'mongodb://localhost/40-contacts-ex',
+        connectionOptions
+    );
+    const numberOfContacts = process.argv[2] || 4;
 
     const contactsDataArr = (new Array(numberOfContacts).fill(null))
         .map( (u,i) => ({
@@ -29,4 +31,10 @@ async function seedContacts() {
     await mongoose.disconnect();
 }
 
-seedContacts().then();
+try {
+    seedContacts().then();
+}
+catch(err) {
+    console.log(err);
+    process.exit(1);
+}

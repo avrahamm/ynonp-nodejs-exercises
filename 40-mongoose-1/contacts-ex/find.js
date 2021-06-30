@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const Contact = require('./models/contact');
+const {connectionOptions} = require('./mongo-utils');
 
 async function findContact() {
-    const connection = await mongoose.connect('mongodb://localhost/40-contacts-ex',
-        {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true});
+    const connection = await mongoose.connect(
+        'mongodb://localhost/40-contacts-ex',
+        connectionOptions
+    );
 
     const searchName = process.argv[2] || '';
     // @link: https://docs.mongodb.com/manual/reference/operator/query/regex/#std-label-syntax-restrictions
@@ -18,4 +21,10 @@ async function findContact() {
     await mongoose.disconnect();
 }
 
-findContact().then();
+try {
+    findContact().then();
+}
+catch(err) {
+    console.log(err);
+    process.exit(1);
+}

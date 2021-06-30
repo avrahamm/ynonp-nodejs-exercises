@@ -16,7 +16,13 @@ function seedContactJson() {
         address: faker.address.streetAddress(true),
     };
 
-    fs.writeJsonSync('./contact.json', contactData);
+    try {
+        fs.writeJsonSync('./contact.json', contactData);
+    }
+    catch(err) {
+        console.log(err);
+        process.exit(1);
+    }
 }
 
 seedContactJson();
