@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<%- include('../partials/header') %>
+<html lang="en">
+<body>
+<h1>Add new link</h1>
+<form action="/news" method="POST"
+      class="row g-3"
+>
+    <div class="col-4">
+        <label for="newsItemTitle" class="form-label">Title</label>
+        <input type="text" name="title" class="form-control" id="newsItemTitle">
+    </div>
+    <div class="col-4">
+        <label for="newsItemLink" class="form-label">Link</label>
+        <input type="text" name="link" class="form-control" id="newsItemLink">
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+</form>
+
+<br/>
+<br/>
+<br/>
+
+<h1>List of items</h1>
+
+<ul class="linksList list-group d-flex flex-column justify-content-center ">
+    <% for (let item of newsItems) { %>
+        <li class="list-group-item d-flex flex-row justify-content-start">
+            <a class="p-4 bd-highlight" href="<%= item.link %>">
+                <%= item.title %>
+            </a>
+
+            <p class="item-score">
+                <%= item.score %>
+            </p>
+
+            <form class="like-item-form p-4 bd-highlight" data-item-id="<%= `${item.id}` %>"
+                  method="POST" action="<%= `/news/${item.id}` %>"
+            >
+                <input type="hidden" name="_method" value="PUT"/>
+                <button type="submit" class="btn btn-dark">Like</button>
+            </form>
+
+            <form class="unlike-item-form p-4 bd-highlight" data-item-id="<%= `${item.id}` %>"
+                  method="POST" action="<%= `/news/${item.id}` %>"
+            >
+                <input type="hidden" name="_method" value="DELETE"/>
+                <button type="submit" class="btn btn-danger">Unlike</button>
+            </form>
+        </li>
+    <% } %>
+</ul>
+<%- include('../partials/footer') %>
+</body>
+</html>
