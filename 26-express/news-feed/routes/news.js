@@ -1,27 +1,30 @@
+const createError = require('http-errors');
 var express = require('express');
 var router = express.Router();
 
+const newsManager = require('../lib/news-manager');
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  const newsItems = [
-    {
-      id:1,
-      title: "7canal",
-      link: "https://www.inn.co.il",
-      score: 10,
-    },
-    {
-      id:2,
-      title: "israel",
-      link: "https://www.inn.co.il",
-      score: 5,
-    }
-  ];
-  res.render('news/index', { newsItems });
+  try {
+    const {newsItems} = newsManager.getItems();
+    res.render('news/index', { newsItems });
+  }
+  catch (e) {
+    return next(createError(e));
+  }
+
 });
 
 router.post('/', function(req,res,next) {
-  res.send("POST route");
+  try {
+    newsManager.addItem(req.body)
+    res.redirect('/news');
+  }
+  catch (e) {
+    return next(createError(e));
+  }
+
 })
 
 router.put('/:id', function(req,res,next) {
