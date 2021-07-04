@@ -40,13 +40,15 @@
                   method="POST" action="<%= `/news/${item.id}` %>"
             >
                 <input type="hidden" name="_method" value="PUT"/>
+                <input type="hidden" name="update_score" value="1"/>
                 <button type="submit" class="btn btn-dark">Like</button>
             </form>
 
             <form class="unlike-item-form p-4 bd-highlight" data-item-id="<%= `${item.id}` %>"
                   method="POST" action="<%= `/news/${item.id}` %>"
             >
-                <input type="hidden" name="_method" value="DELETE"/>
+                <input type="hidden" name="_method" value="PUT"/>
+                <input type="hidden" name="update_score" value="-1"/>
                 <button type="submit" class="btn btn-danger">Unlike</button>
             </form>
         </li>

@@ -8,7 +8,9 @@ const newsManager = require('../lib/news-manager');
 router.get('/', function(req, res, next) {
   try {
     const {newsItems} = newsManager.getItems();
-    res.render('news/index', { newsItems });
+    res.render('news/index', {
+      newsItems: newsItems.sort(newsManager.sortDescByScore)
+    });
   }
   catch (e) {
     return next(createError(e));
@@ -28,7 +30,13 @@ router.post('/', function(req,res,next) {
 })
 
 router.put('/:id', function(req,res,next) {
-  res.send("PUT route");
+  try {
+    newsManager.updateItem(req);
+    res.redirect('/news');
+  }
+  catch (e) {
+    return next(createError(e));
+  }
 })
 
 router.delete('/:id', function(req,res,next) {

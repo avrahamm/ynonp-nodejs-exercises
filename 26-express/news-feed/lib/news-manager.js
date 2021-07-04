@@ -3,6 +3,10 @@ const path = require("path");
 const newsRepository = path.resolve(__dirname, "./news-data.json") ;
 const NewsItem = require('./news-item');
 
+function sortDescByScore(a, b) {
+    return b.score - a.score;
+}
+
 function getItems()
 {
     try {
@@ -36,7 +40,32 @@ function addItem(itemData)
     }
 }
 
+function updateItem(req)
+{
+    try {
+        let {nextId, newsItems } = getItems();
+        let {update_score: updateScore} = req.body;
+        const updatedItems = newsItems.map( (item) => {
+            if (parseInt(item.id) !== parseInt(req.params.id)) {
+                return item;
+            }
+            item.score = parseInt(item.score) + parseInt(updateScore);
+            return item;
+        });
+        return fs.writeJsonSync(newsRepository, {
+            nextId,
+            newsItems: updatedItems,
+        });
+    }
+    catch(err) {
+        console.log(err);
+        throw(err);
+    }
+}
+
 module.exports = {
+    sortDescByScore,
     getItems,
     addItem,
+    updateItem,
 }
