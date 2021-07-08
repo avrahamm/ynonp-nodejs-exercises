@@ -4,8 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const methodOverride = require('method-override');
+
+const mongoose = require('mongoose');
+const {connectionOptions} = require('./lib/mongo-utils');
+mongoose.connect('mongodb://localhost/test',connectionOptions ).then();
+
 const newsRouter = require('./routes/news');
-const newsApiRouter = require('./routes/newsApi');
 
 var app = express();
 
@@ -32,7 +36,6 @@ app.use(methodOverride(function (req, res) {
 }));
 
 app.use('/news', newsRouter);
-app.use('/api/v1.0/news', newsApiRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

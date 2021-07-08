@@ -5,11 +5,11 @@ var router = express.Router();
 const newsManager = require('../lib/news-manager');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', async function(req, res, next) {
   try {
-    const {newsItems} = newsManager.getItems();
+    const newsItems = await newsManager.getItems();
     res.render('news/index', {
-      newsItems: newsItems.sort(newsManager.sortDescByScore)
+      newsItems: newsItems
     });
   }
   catch (e) {

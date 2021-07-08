@@ -1,18 +1,12 @@
-const fs = require('fs-extra');
-const path = require("path");
-const newsRepository = path.resolve(__dirname, "./news-data.json") ;
-const NewsItem = require('./news-item');
+const NewsItem = require('../models/news-item');
 
-function sortDescByScore(a, b) {
-    return b.score - a.score;
-}
-
-function getItems()
+async function getItems()
 {
     try {
-        const newsData = fs.readJsonSync(newsRepository);
-        console.log(newsData);
-        return newsData;
+        const newsItems = await NewsItem.find({});
+        console.log('function getItems()');
+        console.log(newsItems);
+        return newsItems;
     }
     catch(err) {
         console.log(err);
@@ -24,15 +18,12 @@ function getItems()
 function addItem(itemData)
 {
     try {
-        let {nextId, newsItems } = getItems();
-        const {title,link} = itemData;
-        const item = new NewsItem({id:nextId++, title,link,score:0})
-        newsItems.push(item);
-        fs.writeJsonSync(newsRepository, {
-            nextId,
-            newsItems
+        const {title,link,description, topics: topicsString} = itemData;
+        const topicsArray = topicsString.split(',');
+        return NewsItem.create({
+            title,link,description,
+            topicsBelongsTo: topicsArray,
         });
-        return item;
     }
     catch(err) {
         console.log(err);
@@ -40,22 +31,16 @@ function addItem(itemData)
     }
 }
 
-function updateItem(req)
+async function updateItem(req)
 {
     try {
-        let {nextId, newsItems } = getItems();
-        let {update_score: updateScore} = req.body;
-        const updatedItems = newsItems.map( (item) => {
-            if (parseInt(item.id) !== parseInt(req.params.id)) {
-                return item;
-            }
-            item.score = parseInt(item.score) + parseInt(updateScore);
-            return item;
-        });
-        return fs.writeJsonSync(newsRepository, {
-            nextId,
-            newsItems: updatedItems,
-        });
+        let {userName} = req.body;
+        console.log('userName = ', userName );
+        let updatedItem = await NewsItem.findById(req.params.id).exec();
+        console.log('updatedItem = ', updatedItem );
+        updatedItem.peopleClickedLike.push(userName);
+        updatedItem.save();
+        return updatedItem;
     }
     catch(err) {
         console.log(err);
@@ -64,7 +49,6 @@ function updateItem(req)
 }
 
 module.exports = {
-    sortDescByScore,
     getItems,
     addItem,
     updateItem,

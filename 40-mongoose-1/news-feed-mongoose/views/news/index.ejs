@@ -6,13 +6,21 @@
 <form action="/news" method="POST"
       class="row g-3"
 >
-    <div class="col-4">
+    <div class="col-3">
         <label for="newsItemTitle" class="form-label">Title</label>
         <input type="text" name="title" class="form-control" id="newsItemTitle">
     </div>
-    <div class="col-4">
-        <label for="newsItemLink" class="form-label">Link</label>
+    <div class="col-3">
+        <label for="newsItemLink" class="form-label">Link Address</label>
         <input type="text" name="link" class="form-control" id="newsItemLink">
+    </div>
+    <div class="col-3">
+        <label for="newsItemDescription" class="form-label">Description</label>
+        <input type="text" name="description" class="form-control" id="newsItemDescription">
+    </div>
+    <div class="col-3">
+        <label for="newsItemTopics" class="form-label">Link Topics - separate by comma</label>
+        <input type="text" name="topics" class="form-control" id="newsItemTopics">
     </div>
     <div class="col-12">
         <button type="submit" class="btn btn-primary">Create</button>
@@ -32,24 +40,28 @@
                 <%= item.title %>
             </a>
 
-            <p class="item-score">
-                <%= item.score %>
-            </p>
+            <div class="item-topics ml-1">
+                <% for (let topic of item.topicsBelongsTo) { %>
+                        <span><%= topic %></span><br/>
+                <% } %>
+
+            </div>
+
+            <div class="mx-auto" ><%= item.description %></div>
+
+            <div class="item-topics ml-1">
+                <% for (let username of item.peopleClickedLike) { %>
+                    <span><%= username %></span><br/>
+                <% } %>
+
+            </div>
 
             <form class="like-item-form p-4 bd-highlight" data-item-id="<%= `${item.id}` %>"
                   method="POST" action="<%= `/news/${item.id}` %>"
             >
                 <input type="hidden" name="_method" value="PUT"/>
-                <input type="hidden" name="update_score" value="1"/>
+                <input type="text" name="userName" value="" title="Enter your name"/>
                 <button type="submit" class="btn btn-dark">Like</button>
-            </form>
-
-            <form class="unlike-item-form p-4 bd-highlight" data-item-id="<%= `${item.id}` %>"
-                  method="POST" action="<%= `/news/${item.id}` %>"
-            >
-                <input type="hidden" name="_method" value="PUT"/>
-                <input type="hidden" name="update_score" value="-1"/>
-                <button type="submit" class="btn btn-danger">Unlike</button>
             </form>
         </li>
     <% } %>
