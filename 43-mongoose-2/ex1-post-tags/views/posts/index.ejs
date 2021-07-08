@@ -1,5 +1,7 @@
-<html>
-    <head></head>
+<html lang="en">
+    <head>
+        <title>Posts</title>
+    </head>
     <style>
         .feed {
             list-style: none;
@@ -29,8 +31,11 @@
     <ul class="feed">
     <% for (let post of posts) { %>
         <li>
-            <span class="author"><%= post.author %></span>
-            <span class="text" style="color: <%= post.color %>"><%= post.text %></span>
+            <span class="author" style="width:10%; margin-left: 20px;"><%= post.author %></span>
+            <span class="text" style="width:20%; margin-left: 20px;color: <%= post.color %>">
+                <%= post.text %>
+            </span>
+            <span class="text" style="width:20%; margin-left: 20px;"><%= post.topics.join(',') %></span>
         </li>
     <% } %>
     </ul>

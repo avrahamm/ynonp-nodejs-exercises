@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>Edit Post Form</title>
@@ -35,6 +35,12 @@
             <label>
                 Color:
                 <input type="color" name="color" value="<%= post.color %>" />
+            </label>
+        </div>
+        <div>
+            <label>
+                Topics - separated by comma:
+                <input type="text" name="topics" value=""/>
             </label>
         </div>
         <input type="submit" value="Post" />

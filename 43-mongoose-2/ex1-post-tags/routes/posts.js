@@ -30,9 +30,10 @@ router.get('/', async function(req, res, nest) {
 
 // POST /posts
 router.post('/', async function(req, res, next) {
-    const post = new Post(req.body);
+    const {author, text, color, topics: topicsStr} = req.body;
+    const topics = topicsStr.split(',');
     try {
-        await post.save();
+        await Post.create({author, text, color, topics});
         res.redirect('/posts');
     } catch {
         console.log(post.errors);

@@ -5,12 +5,11 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var postsRouter = require('./routes/posts');
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/mymessages');
-
+const {connectionOptions} = require('./lib/mongo-utils');
+mongoose.connect('mongodb://localhost/mymessages',connectionOptions ).then();
 
 var app = express();
 
@@ -25,7 +24,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
 
 
