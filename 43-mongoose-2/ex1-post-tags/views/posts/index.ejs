@@ -28,6 +28,23 @@
 
 <body>
     <a href='/posts/new'>New Message</a>
+
+    <ul class="feed">
+        <% for (let [topic,topicCount] of Object.entries(topicsCounted)) { %>
+            <li>
+                <span class="author" style="width:10%; margin-left: 20px;">
+                    <%= topic %>
+                </span>
+                <span class="text" style="width:20%; margin-left: 20px;">
+                    <%= topicCount %>
+                </span>
+            </li>
+        <% } %>
+    </ul>
+
+    <br/>
+    <hr>
+    <br/>
     <ul class="feed">
     <% for (let post of posts) { %>
         <li>
