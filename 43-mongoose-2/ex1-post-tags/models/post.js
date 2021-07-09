@@ -8,6 +8,21 @@ const postSchema = new mongoose.Schema({
 });
 
 postSchema.statics.countTopics = function(posts) {
+    const topicsCounted = countTopics(posts);
+    console.log('statics topicsCounted = ', topicsCounted);
+    return topicsCounted;
+};
+
+postSchema.query.countTopics = async function() {
+    const posts = await this;
+    const topicsCounted = countTopics(posts);
+    console.log('query topicsCounted = ', topicsCounted);
+    posts.topicsCounted = topicsCounted;
+    return posts;
+};
+
+function countTopics(posts)
+{
     const topicsListReducer = (accumulator, post) => accumulator.concat(post.topics);
     const topicsList = posts.reduce(topicsListReducer,[]);
     const countTopicsReducer = (accumulator, topic) => {
@@ -19,10 +34,8 @@ postSchema.statics.countTopics = function(posts) {
         }
         return accumulator;
     };
-    const topicsCounted = topicsList.reduce(countTopicsReducer, {});
-    console.log('topicsCounted = ', topicsCounted);
-    return topicsCounted;
-};
+    return topicsList.reduce(countTopicsReducer, {});
+}
 
 module.exports = new mongoose.model('Post', postSchema);
 

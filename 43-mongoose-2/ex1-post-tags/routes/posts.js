@@ -17,7 +17,9 @@ router.get('/', async function(req, res, nest) {
 
     const totalPages = totalRecords / itemsPerPage;
     const offset = itemsPerPage * (page - 1);
-    const posts = await Post.find({}).sort({ _id: -1 }).skip(offset).limit(itemsPerPage);
+    const posts = await Post.find({}).sort({ _id: -1 })
+        .skip(offset).limit(itemsPerPage)
+        .countTopics();
     const topicsCounted = Post.countTopics(posts);
     res.render('posts/index', {
         posts,

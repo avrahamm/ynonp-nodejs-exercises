@@ -30,7 +30,7 @@
     <a href='/posts/new'>New Message</a>
 
     <ul class="feed">
-        <% for (let [topic,topicCount] of Object.entries(topicsCounted)) { %>
+        <% for (let [topic,topicCount] of Object.entries(posts.topicsCounted)) { %>
             <li>
                 <span class="author" style="width:10%; margin-left: 20px;">
                     <%= topic %>
