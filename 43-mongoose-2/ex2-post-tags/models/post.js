@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// const TopicModel = require('./topic');
+const Topic = require('./topic');
 
 const postSchema = new mongoose.Schema({
     author: { type: String, required: true },
@@ -14,34 +14,46 @@ const postSchema = new mongoose.Schema({
 });
 
 postSchema.statics.countTopics = function(posts) {
-    const topicsCounted = countTopics(posts);
+    const {topicsCounted} = prepareTopics(posts);
     console.log('statics topicsCounted = ', topicsCounted);
     return topicsCounted;
 };
 
-postSchema.query.countTopics = async function() {
+postSchema.query.prepareTopics = async function() {
     const posts = await this;
-    const topicsCounted = countTopics(posts);
+    const {topicsCounted, uniqueTopicsList} = prepareTopics(posts);
     console.log('query topicsCounted = ', topicsCounted);
+    console.log('query uniqueTopicsList = ', uniqueTopicsList);
     posts.topicsCounted = topicsCounted;
+    posts.sortedTopicsList = uniqueTopicsList.sort( Topic.compareTopics );
     return posts;
 };
 
-function countTopics(posts)
+/**
+ * Returns counted topics dictionary, and uniqueTopicsList.
+ *
+ * @param posts
+ * @returns {*}
+ */
+function prepareTopics(posts)
 {
     const topicsListReducer = (accumulator, post) => accumulator.concat(post.topics);
     const topicsList = posts.reduce(topicsListReducer,[]);
-    const countTopicsReducer = (accumulator, topic) => {
-        if( !accumulator.hasOwnProperty(topic.name)) {
-            accumulator[topic.name] = 1;
+    const prepareTopicsReducer = (accumulator, topic) => {
+        if( !accumulator.topicsCounted.hasOwnProperty(topic.name)) {
+            accumulator.topicsCounted[topic.name] = 1;
+            accumulator.uniqueTopicsList.push(topic);
         }
         else {
-            accumulator[topic.name] += 1;
+            accumulator.topicsCounted[topic.name] += 1;
         }
         return accumulator;
     };
-    return topicsList.reduce(countTopicsReducer, {});
+
+    return topicsList.reduce(prepareTopicsReducer, {
+        topicsCounted:{},
+        uniqueTopicsList:[]
+    });
 }
 
 module.exports = new mongoose.model('Post', postSchema);
-

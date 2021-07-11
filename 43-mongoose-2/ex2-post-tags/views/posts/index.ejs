@@ -30,13 +30,13 @@
     <a href='/posts/new'>New Message</a>
 
     <ul class="feed">
-        <% for (let [topic,topicCount] of Object.entries(posts.topicsCounted)) { %>
+        <% for (let topic of posts.sortedTopicsList ) { %>
             <li>
                 <span class="author" style="width:10%; margin-left: 20px;">
-                    <%= topic %>
+                    <%= topic.name %>
                 </span>
                 <span class="text" style="width:20%; margin-left: 20px;">
-                    <%= topicCount %>
+                    <%= posts.topicsCounted[topic.name] %>
                 </span>
             </li>
         <% } %>
@@ -52,7 +52,11 @@
             <span class="text" style="width:20%; margin-left: 20px;color: <%= post.color %>">
                 <%= post.text %>
             </span>
-            <span class="text" style="width:20%; margin-left: 20px;"><%= post.topics.join(',') %></span>
+            <span class="text" style="width:20%; margin-left: 20px;">
+                <%= post.topics
+                        .map( topic => topic.name)
+                        .join(',') %>
+            </span>
         </li>
     <% } %>
     </ul>

@@ -9,7 +9,7 @@ router.get('/new', function(req, res, next) {
 });
 
 // GET /posts
-router.get('/', async function(req, res, nest) {
+router.get('/', async function(req, res, next) {
 
     const totalRecords = await Post.estimatedDocumentCount();
 
@@ -24,14 +24,13 @@ router.get('/', async function(req, res, nest) {
         // .populate('topics')
         .populate({
             path: "topics",
-            select:"name weight",
+            select:"_id name weight",
             model: Topic,
         })
-        .countTopics();
-    // const topicsCounted = Post.countTopics(posts);
+        .prepareTopics();
+
     res.render('posts/index', {
         posts,
-        // topicsCounted,
         pagination: {
             totalPages,
             url: (page) => `/posts?page=${page}`,
