@@ -8,8 +8,8 @@ var indexRouter = require('./routes/index');
 var postsRouter = require('./routes/posts');
 
 const mongoose = require('mongoose');
-const {connectionOptions} = require('./lib/mongo-utils');
-mongoose.connect('mongodb://localhost/mymessages',connectionOptions ).then();
+const {connectionDB, connectionOptions} = require('./lib/mongo-utils');
+mongoose.connect(connectionDB,connectionOptions ).then();
 
 var app = express();
 
