@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Post = require('../models/post');
 const Topic = require('../models/topic');
+const {getPaginationData} = require('../lib/utils');
 
 /**
  * posts of topic
@@ -12,10 +13,11 @@ router.get('/:id/posts', async function(req, res, next) {
     let topicPosts = await topicPostsQuery;
 
     const totalRecords = topicPosts.length;
-    const itemsPerPage = Number(req.query.limit) || 3;
-    const page = Number(req.query.page) || 1;
-    const totalPages = Math.ceil(totalRecords / itemsPerPage);
-    const offset = itemsPerPage * (page - 1);
+    const {
+        itemsPerPage,
+        totalPages,
+        offset,
+    } = getPaginationData(req,totalRecords);
 
     let sortedTopicPosts = await topicPostsQuery
         .sort({ _id: -1 })
