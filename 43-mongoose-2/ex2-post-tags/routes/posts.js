@@ -12,12 +12,11 @@ router.get('/new', function(req, res, next) {
 router.get('/', async function(req, res, next) {
 
     const totalRecords = await Post.estimatedDocumentCount();
-
     const itemsPerPage = Number(req.query.limit) || 3;
     const page = Number(req.query.page) || 1;
-
     const totalPages = Math.ceil(totalRecords / itemsPerPage);
     const offset = itemsPerPage * (page - 1);
+
     const posts = await Post.find({})
         .sort({ _id: -1 })
         .skip(offset).limit(itemsPerPage)
@@ -38,14 +37,32 @@ router.get('/', async function(req, res, next) {
     });
 });
 
-// POST /posts
+
+/**
+ * POST /posts
+ *
+ * First finds or creates topics ids
+ * to add to created post document.
+ */
 router.post('/', async function(req, res, next) {
     const {author, text, color, topics: topicsStr} = req.body;
-    const topicIds = topicsStr.split(',')
-        .map(name => Topic.create({name}))
-        .map(topic => topic._id)
+    const post = new Post({author, text, color});
     try {
-        await Post.create({author, text, color, topics: topicIds});
+        let topics = await Promise.all(
+            topicsStr.split(',')
+            .map(name => name.trim())
+            .map( async (name) => {
+                const existingTopic = await Topic.findOne({name});
+                console.log('existingTopic = ', existingTopic);
+                if (Boolean(existingTopic)) {
+                    return existingTopic._id;
+                }
+                const createdTopic = await Topic.create({name});
+                return createdTopic._id;
+            })
+        );
+        post.topics = topics;
+        await post.save();
         res.redirect('/posts');
     } catch {
         console.log(post.errors);

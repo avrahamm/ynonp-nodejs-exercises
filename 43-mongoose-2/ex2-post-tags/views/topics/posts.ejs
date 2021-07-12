@@ -27,28 +27,11 @@
 
 
 <body>
-    <a href='/posts/new'>New Message</a>
-
-    <ul class="feed">
-        <% for (let topic of posts.sortedTopicsList ) { %>
-            <li>
-                <a href="/topics/<%= topic._id %>/posts">
-                    <span class="topicName" style="width:10%; margin-left: 20px;">
-                        <%= topic.name %>
-                    </span>
-                    <span class="topicCount" style="width:20%; margin-left: 20px;">
-                        <%= posts.topicsCounted[topic.name] %>
-                    </span>
-                </a>
-            </li>
-        <% } %>
-    </ul>
-
-    <br/>
+    <h1>Posts of topic <%=topic%></h1>
     <hr>
     <br/>
     <ul class="feed">
-    <% for (let post of posts) { %>
+    <% for (let post of sortedTopicPosts) { %>
         <li>
             <span class="author" style="width:10%; margin-left: 20px;"><%= post.author %></span>
             <span class="text" style="width:20%; margin-left: 20px;color: <%= post.color %>">
