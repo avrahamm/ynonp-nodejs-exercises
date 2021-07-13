@@ -51,19 +51,7 @@ router.post('/', async function(req, res, next) {
     const {author, text, color, topics: topicsStr} = req.body;
     const post = new Post({author, text, color});
     try {
-        let topics = await Promise.all(
-            topicsStr.split(',')
-            .map(name => name.trim())
-            .map( async (name) => {
-                const existingTopic = await Topic.findOne({name});
-                console.log('existingTopic = ', existingTopic);
-                if (Boolean(existingTopic)) {
-                    return existingTopic._id;
-                }
-                const createdTopic = await Topic.create({name});
-                return createdTopic._id;
-            })
-        );
+        let topics = await Topic.getTopicsIdsV2(topicsStr);
         post.topics = topics;
         await post.save();
         res.redirect('/posts');

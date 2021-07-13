@@ -6,6 +6,11 @@ async function main() {
     const {connectionDB, connectionOptions} = require('../lib/mongo-utils');
     await mongoose.connect(connectionDB,connectionOptions);
 
+    //@link:https://stackoverflow.com/a/68361651/9346694
+    // to turn on indexes before inserting,
+    // especially Topic.name unique constrain.
+    await Topic.syncIndexes();
+
     const [t1,t2,t3] = await Topic.insertMany([
         {
             name:'topic1',
