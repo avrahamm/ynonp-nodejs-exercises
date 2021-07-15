@@ -1,0 +1,69 @@
+<html lang="en">
+    <head>
+        <title>Posts</title>
+    </head>
+    <style>
+        .feed {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feed li {
+            margin: 10px;
+            padding: 10px;
+            box-shadow: 1px 1px 2px 2px rgba(0,0,0,.8);
+            background: rgba(230, 230, 230, 0.8);
+        }
+
+        .feed .author {
+            font-weight: bold;
+        }
+
+        .feed .author::after {
+            content: ":";
+        }
+    </style>
+
+
+<body>
+    <a href='/posts/new'>New Message</a>
+
+    <ul class="feed">
+        <% for (let topic of posts.sortedTopicsList ) { %>
+            <li>
+                <a href="/topics/<%= topic._id %>/posts">
+                    <span class="topicName" style="width:10%; margin-left: 20px;">
+                        <%= topic.name %>
+                    </span>
+                    <span class="topicCount" style="width:20%; margin-left: 20px;">
+                        <%= posts.topicsCounted[topic.name] %>
+                    </span>
+                </a>
+            </li>
+        <% } %>
+    </ul>
+
+    <br/>
+    <hr>
+    <br/>
+    <ul class="feed">
+    <% for (let post of posts) { %>
+        <li>
+            <span class="author" style="width:10%; margin-left: 20px;"><%= post.author %></span>
+            <span class="text" style="width:20%; margin-left: 20px;color: <%= post.color %>">
+                <%= post.text %>
+            </span>
+            <span class="text" style="width:20%; margin-left: 20px;">
+                <%= post.topics
+                        .map( topic => topic.name)
+                        .join(',') %>
+            </span>
+        </li>
+    <% } %>
+    </ul>
+
+    <%- include('../paginate', { paginate: pagination }) %>
+</body>
+
+</html>
