@@ -1,4 +1,4 @@
-module.exports.connectionDB = 'mongodb://localhost/43-ex2-posts-tags';
+module.exports.connectionDB = 'mongodb://localhost/47-auth';
 module.exports.connectionOptions = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
