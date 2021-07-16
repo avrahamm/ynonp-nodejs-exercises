@@ -2,15 +2,23 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Topic = require('./topic');
+const User = require('./user');
 
 const postSchema = new mongoose.Schema({
-    author: { type: String, required: true },
+    author: {type: Schema.Types.ObjectId,
+        ref: User
+    },
     color: { type: String, default: '#333' },
     image: Buffer,
     text: String,
-    topics: {type: [{type: Schema.Types.ObjectId,
-            // ref: TopicModel
-    }], default:[]} ,
+    topics: {
+        type: [
+            {type: Schema.Types.ObjectId,
+            // ref: Topic
+            }
+        ],
+        default:[]
+    } ,
 });
 
 postSchema.statics.countTopics = function(posts) {
