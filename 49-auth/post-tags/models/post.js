@@ -6,7 +6,7 @@ const User = require('./user');
 
 const postSchema = new mongoose.Schema({
     author: {type: Schema.Types.ObjectId,
-        ref: User
+        ref: User,
     },
     color: { type: String, default: '#333' },
     image: Buffer,

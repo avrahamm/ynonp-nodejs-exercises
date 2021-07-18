@@ -10,32 +10,13 @@ const topicSchema = new mongoose.Schema({
      else if ( a.weight > b.weight) return 1;
  };
 
-topicSchema.statics.getTopicsIds = async function(topicsStr)
-{
-    return Promise.all(
-        topicsStr.split(',')
-            .map(name => name.trim())
-            .map( async (name) => {
-                // WARNING! According to Ynon remark using await in each iteration
-                // can slow down the performance
-                const existingTopic = await this.findOne({name});
-                console.log('existingTopic = ', existingTopic);
-                if (Boolean(existingTopic)) {
-                    return existingTopic._id;
-                }
-                const createdTopic = await this.create({name});
-                return createdTopic._id;
-            })
-    )
-}
-
 /**
  * Rewrote getTopicsIds without
  * await in map callback can hurt performance.
  * @param topicsStr
  * @returns {Promise<*[]>}
  */
-topicSchema.statics.getTopicsIdsV2 = async function(topicsStr)
+topicSchema.statics.getTopicsIds = async function(topicsStr)
 {
     const topicNamesArray = topicsStr.split(',')
         .map(name => name.trim());
