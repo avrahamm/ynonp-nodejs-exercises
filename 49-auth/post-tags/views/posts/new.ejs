@@ -20,14 +20,7 @@
     <form action="/posts" method="POST">
         <div>
             <label>
-                Author:
-                <input type="text" name="author" readonly
-                       value="<%= post.author.name %>"/>
-            </label>
-        </div>
-        <div>
-            <label>
-                Text:
+                <%= user.name %>:
                 <textarea name="text"><%= post.text %></textarea>
             </label>
         </div>
