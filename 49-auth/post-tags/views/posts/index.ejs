@@ -29,6 +29,16 @@
 <body>
     <a href='/posts/new'>New Message</a>
 
+    <form action="/posts" method="GET">
+        <div>
+            <label>
+                Filter by user name:
+                <input type="text" name="username" value=""/>
+            </label>
+        </div>
+        <input type="submit" value="Search" />
+    </form>
+
     <ul class="feed">
         <% for (let topic of posts.sortedTopicsList ) { %>
             <li>

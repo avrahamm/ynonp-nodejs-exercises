@@ -23,9 +23,16 @@ router.get('/new',
     }
 );
 
+async function getFilteredPostsAndCount(req)
+{
+    // const posts = await Post.find({})
+    // const totalRecords = await Post.estimatedDocumentCount();
+}
+
+
 // GET /posts
 router.get('/', async function(req, res, next) {
-
+    // const [filteredPosts, totalRecords] = await getFilteredPostsAndCount(req);
     const totalRecords = await Post.estimatedDocumentCount();
     const {
         itemsPerPage,
