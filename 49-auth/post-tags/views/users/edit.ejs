@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Edit User Page</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Edit User</h1>
+        <% if (user.errors) { %>
+        <h2>Errors found in form</h2>
+        <ul>
+            <% for (let msg of Object.values(user.errors)) { %>
+            <li>
+                <%= msg %>
+            </li>
+            <% } %>
+        </ul>
+        <% } %>
+
+    <form method="POST" action="<%= `/users/${user._id}` %>" >
+        <input type="hidden" name="_method" value="PUT"/>
+        <div class='field'>
+            <label>
+                Name
+                <input type='text' name='name' value="<%= user.name %>" />
+            </label>
+        </div>
+        <div class='field'>
+            <label>
+                Email
+                <input type='email' name='email' value="<%= user.email %>" />
+            </label>
+        </div>
+        <input type="submit" value="Save" />
+
+    </form>
+  </body>
+</html>

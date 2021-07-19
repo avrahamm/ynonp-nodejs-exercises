@@ -7,7 +7,10 @@
 <body>
   <h1><%= title %></h1>
   <% if (user) { %>
-    <p>Nice to see you: <%= user.email %></p>
+    <p>Nice to see you: <%= user.name %>, <%= user.email %></p>
+    <p>
+      <a href='/users/edit'>Edit user</a>
+    </p>
     <form action="/sessions/logout" method="POST">
       <input type="submit" value="Logout" />
     </form>

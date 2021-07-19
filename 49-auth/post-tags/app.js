@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const methodOverride = require('method-override');
 const cookieSession = require('cookie-session');
 
 var indexRouter = require('./routes/index');
@@ -37,6 +38,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
+// app.use(/^[^.]+$/, debugMiddleware);
+// override with POST having query string _method=DELETE in url.
+// @link:http://expressjs.com/en/resources/middleware/method-override.html
+app.use(methodOverride(function (req, res) {
+  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+    // look in urlencoded POST bodies and delete it
+    var method = req.body._method
+    delete req.body._method
+    return method
+  }
+}));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
