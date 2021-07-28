@@ -77,7 +77,11 @@ router.get('/', async function(req, res, next) {
         posts,
         pagination: {
             totalPages,
-            url: (page) => `/posts?page=${page}`,
+            username: req.query.username ?? "",
+            url: function(page) {
+                console.log(this);
+                return `/posts?page=${page}&username=${this.username}`
+            },
         }
     });
 });
