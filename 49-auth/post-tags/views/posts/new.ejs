@@ -19,9 +19,10 @@
 
     <form action="/posts" method="POST">
         <div>
-            <label>
+            <label for="postText">
+                <span> text</span> <br/>
                 <%= user.name %>:
-                <textarea name="text"><%= post.text %></textarea>
+                <textarea id="postText" name="text"><%= post.text %></textarea>
             </label>
         </div>
 
@@ -35,6 +36,13 @@
             <label>
                 Topics - separated by comma:
                 <input type="text" name="topics" value=""/>
+            </label>
+        </div>
+
+        <div>
+            <label>
+                Permitted Usernames - separated by comma:
+                <input type="text" name="permittedUsers" value=""/>
             </label>
         </div>
         <input type="submit" value="Create" />

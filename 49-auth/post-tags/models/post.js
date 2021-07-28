@@ -10,7 +10,7 @@ const postSchema = new mongoose.Schema({
     },
     color: { type: String, default: '#333' },
     image: Buffer,
-    text: String,
+    text: { type: String, required: true},
     topics: {
         type: [
             {type: Schema.Types.ObjectId,
@@ -18,7 +18,17 @@ const postSchema = new mongoose.Schema({
             }
         ],
         default:[]
-    } ,
+    },
+    isGuarded: { type: Boolean, default: false },
+    permittedUsers: {
+        type: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        ],
+        default:[]
+    }
 });
 
 postSchema.statics.countTopics = function(posts) {

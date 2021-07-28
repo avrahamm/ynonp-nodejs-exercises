@@ -23,27 +23,6 @@ router.get('/new',
     }
 );
 
-/**
- * TODO-IDEA! To optimize with Redis
- * @link:https://epsagon.com/development/using-redis-to-optimize-mongodb-queries/
- * @param req
- * @returns {Promise<{}>}
- */
-async function getAuthorFilterObj(req)
-{
-    const authorFilterObj = {};
-    let filteredUser = null;
-    const usernameFilter = req.query.username;
-    if ( Boolean(usernameFilter)) {
-        filteredUser = await User.findOne({ name: usernameFilter });
-        if ( Boolean(filteredUser) ) {
-            authorFilterObj.author = filteredUser;
-        }
-    }
-
-    return authorFilterObj;
-}
-
 // GET /posts
 router.get('/', async function(req, res, next) {
     const authorFilterObj = await getAuthorFilterObj(req);
@@ -97,13 +76,35 @@ router.post('/', async function(req, res, next) {
     const {text, color, topics: topicsStr} = req.body;
     const post = new Post({author: req.user._id, text, color});
     try {
-        post.topics = await Topic.getTopicsIds(topicsStr);
+        post.topics = Boolean(topicsStr) ? await Topic.getTopicsIds(topicsStr) : [];
         await post.save();
         res.redirect('/posts');
-    } catch {
-        console.log(post.errors);
-        res.render('posts/new', { post: post });
+    } catch (err) {
+        console.log(err);
+        console.log(post);
+        res.render('posts/new', { post: post, user: req.user });
     }
 });
+
+/**
+ * TODO-IDEA! To optimize with Redis
+ * @link:https://epsagon.com/development/using-redis-to-optimize-mongodb-queries/
+ * @param req
+ * @returns {Promise<{}>}
+ */
+async function getAuthorFilterObj(req)
+{
+    const authorFilterObj = {};
+    let filteredUser = null;
+    const usernameFilter = req.query.username;
+    if ( Boolean(usernameFilter)) {
+        filteredUser = await User.findOne({ name: usernameFilter });
+        if ( Boolean(filteredUser) ) {
+            authorFilterObj.author = filteredUser;
+        }
+    }
+
+    return authorFilterObj;
+}
 
 module.exports = router;

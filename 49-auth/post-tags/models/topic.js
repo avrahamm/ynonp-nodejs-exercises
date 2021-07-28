@@ -18,6 +18,9 @@ const topicSchema = new mongoose.Schema({
  */
 topicSchema.statics.getTopicsIds = async function(topicsStr)
 {
+    if( !Boolean(topicsStr)) {
+        return [];
+    }
     const topicNamesArray = topicsStr.split(',')
         .map(name => name.trim());
     const existingTopics = await this.find({
