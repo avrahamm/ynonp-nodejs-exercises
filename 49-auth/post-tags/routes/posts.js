@@ -23,24 +23,40 @@ router.get('/new',
     }
 );
 
-async function getFilteredPostsAndCount(req)
+/**
+ * TODO-IDEA! To optimize with Redis
+ * @link:https://epsagon.com/development/using-redis-to-optimize-mongodb-queries/
+ * @param req
+ * @returns {Promise<{}>}
+ */
+async function getAuthorFilterObj(req)
 {
-    // const posts = await Post.find({})
-    // const totalRecords = await Post.estimatedDocumentCount();
-}
+    const authorFilterObj = {};
+    let filteredUser = null;
+    const usernameFilter = req.query.username;
+    if ( Boolean(usernameFilter)) {
+        filteredUser = await User.findOne({ name: usernameFilter });
+        if ( Boolean(filteredUser) ) {
+            authorFilterObj.author = filteredUser;
+        }
+    }
 
+    return authorFilterObj;
+}
 
 // GET /posts
 router.get('/', async function(req, res, next) {
-    // const [filteredPosts, totalRecords] = await getFilteredPostsAndCount(req);
-    const totalRecords = await Post.estimatedDocumentCount();
+    const authorFilterObj = await getAuthorFilterObj(req);
+
+    const filteredPosts = await Post.find(authorFilterObj);
+    const totalRecords = filteredPosts.length;
     const {
         itemsPerPage,
         totalPages,
         offset,
     } = getPaginationData(req,totalRecords);
 
-    const posts = await Post.find({})
+    const posts = await Post.find(authorFilterObj)
         .sort({ _id: -1 })
         .skip(offset)
         .limit(itemsPerPage)
