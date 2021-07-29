@@ -2,11 +2,10 @@
 <html lang="en">
 
 <head>
-    <title>New Post Form</title>
+    <title>Edit Post Form</title>
 </head>
 
 <body>
-
         <% if (post.errors) { %>
             <h2>Errors found in form</h2>
             <ul>
@@ -15,9 +14,9 @@
                 <% } %>
             </ul>
         <% } %>
-    
 
-    <form action="/posts" method="POST">
+    <form method="POST" action="<%= `/posts/${post._id}` %>" >
+        <input type="hidden" name="_method" value="PUT"/>
         <div>
             <label for="postText">
                 <span> text</span> <br/>
@@ -38,24 +37,34 @@
         <div>
             <label for="topics">
                 Topics - separated by comma:
-                <input id="topics" type="text" name="topics" value=""/>
+                <input id="topics" type="text" name="topics" value="<%= post.topics
+                        .map( topic => {
+                            console.log(topic);
+                            return topic.name;
+                        })
+                        .join(',') %>"/>
             </label>
         </div>
 
         <div>
-            <input type="checkbox" name="isGuarded" id="isGuarded">
+            <input type="checkbox" name="isGuarded" id="isGuarded"
+                    <%= post.isGuarded ? 'checked' : '' %>
+            >
             <label for="isGuarded">Private post mode</label>
         </div>
 
-        <div id="permittedUsersDiv" style="display: none;">
+        <div id="permittedUsersDiv" style="display: <%= post.isGuarded ? 'block' : 'none' %>;">
             <label for="permittedUsers">
                 Permitted Usernames - separated by comma:
                 <input id="permittedUsers" type="text" name="permittedUsers"
                        style="width: 150px; height: 25px;"
-                       value="" placeholder="u1,u2,u3..."/>
+                       value="<%= post.permittedUsers
+                               .map( user => user.name)
+                               .join(',') %>"
+                       placeholder="u1,u2,u3..."/>
             </label>
         </div>
-        <input type="submit" value="Create" />
+        <input type="submit" value="Save" />
     </form>
         <script>
             const privateModeCheckbox = document.querySelector('#isGuarded');

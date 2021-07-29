@@ -1,3 +1,4 @@
+const createError = require('http-errors');
 const router = require('express').Router();
 // @link:https://www.sitepoint.com/local-authentication-using-passport-node-js/
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
@@ -24,53 +25,79 @@ router.get('/new',
 );
 
 // GET /posts
-router.get('/', async function(req, res, next) {
-    const authorFilterObj = await getAuthorFilterObj(req);
-    const permittedPostsFilterObj = getPermittedUsersFilterObj(req);
-    const postsComposedFilter = {
-        $and: [
-            authorFilterObj,
-            permittedPostsFilterObj,
-        ],
-    };
+router.get('/', async function (req, res, next) {
+    try {
+        const authorFilterObj = await getAuthorFilterObj(req);
+        const permittedPostsFilterObj = getPermittedUsersFilterObj(req);
+        const postsComposedFilter = {
+            $and: [
+                authorFilterObj,
+                permittedPostsFilterObj,
+            ],
+        };
 
-    const filteredPosts = await Post.find(postsComposedFilter);
-    const totalRecords = filteredPosts.length;
-    const {
-        itemsPerPage,
-        totalPages,
-        offset,
-    } = getPaginationData(req,totalRecords);
-
-    const posts = await Post.find(postsComposedFilter)
-        .sort({ _id: -1 })
-        .skip(offset)
-        .limit(itemsPerPage)
-        // .populate('topics')
-        .populate({
-            path: "topics",
-            select:"_id name weight",
-            model: Topic,
-        })
-        .populate({
-            path: "author",
-            select:"_id name email",
-            model: User,
-        })
-        .prepareTopics();
-
-    res.render('posts/index', {
-        posts,
-        pagination: {
+        const filteredPosts = await Post.find(postsComposedFilter);
+        const totalRecords = filteredPosts.length;
+        const {
+            itemsPerPage,
             totalPages,
-            username: req.query.username ?? "",
-            url: function(page) {
-                return `/posts?page=${page}&username=${this.username}`
-            },
-        }
-    });
+            offset,
+        } = getPaginationData(req, totalRecords);
+
+        const posts = await Post.find(postsComposedFilter)
+            .sort({_id: -1})
+            .skip(offset)
+            .limit(itemsPerPage)
+            // .populate('topics')
+            .populate({
+                path: "topics",
+                select: "_id name weight",
+                model: Topic,
+            })
+            .populate({
+                path: "author",
+                select: "_id name email",
+                model: User,
+            })
+            .prepareTopics();
+
+        res.render('posts/index', {
+            posts,
+            pagination: {
+                totalPages,
+                username: req.query.username ?? "",
+                url: function (page) {
+                    return `/posts?page=${page}&username=${this.username}`
+                },
+            }
+        });
+    } catch (err) {
+        console.log(err);
+        return next(createError(err));
+    }
 });
 
+
+// GET: edit post
+router.get('/:id/edit', async function(req, res, next) {
+    try {
+        const post = await Post.findById(req.params.id)
+            .populate({
+                path: "topics",
+                select: "_id name weight",
+                model: Topic,
+            })
+            .populate({
+                path: "permittedUsers",
+                select: "_id name",
+                model: User,
+            });
+        res.render('posts/edit', { post: post, user: req.user });
+    } catch (err) {
+        console.log(err);
+        return next(createError(err));
+    }
+});
 
 /**
  * POST /posts
@@ -89,6 +116,35 @@ router.post('/', async function(req, res, next) {
         res.redirect('/posts');
     } catch (err) {
         res.render('posts/new', { post: post, user: req.user });
+    }
+});
+
+router.put('/:id', async function(req, res, next) {
+    const {text, color, topics: topicsStr, isGuarded, permittedUsers: permittedUsersStr} = req.body;
+    let post = null;
+    try {
+        post = await Post.findById(req.params.id);
+        post.text = text;
+        post.color = color;
+        const curTopicsStr = post.topics.map(topic => topic.name).join(',');
+        if ( curTopicsStr !== topicsStr ) {
+            post.topics = await Topic.getTopicsIds(topicsStr);
+        }
+        if ( !(Boolean(isGuarded)) ) {
+            post.isGuarded = false;
+            post.permittedUsers = [];
+        }
+        else {
+            post.isGuarded = true;
+            const curPermittedUsersStr = post.permittedUsers.map(user => user.name).join(',');
+            if ( curPermittedUsersStr !== permittedUsersStr ) {
+                post.permittedUsers = await User.getPermittedUsersIds(permittedUsersStr);
+            }
+        }
+        await post.save();
+        res.redirect('/posts');
+    } catch (err) {
+        res.render(`posts/${req.params.id}/edit`, { post: post, user: req.user });
     }
 });
 
@@ -113,6 +169,11 @@ async function getAuthorFilterObj(req)
     return authorFilterObj;
 }
 
+/**
+ * @link:https://stackoverflow.com/questions/36666726/get-results-from-two-or-queries-with-and-in-mongoose
+ * @param req
+ * @returns {{$or: [{isGuarded: boolean}, {author}, {permittedUsers}]}}
+ */
 function getPermittedUsersFilterObj(req)
 {
     return { $or:
