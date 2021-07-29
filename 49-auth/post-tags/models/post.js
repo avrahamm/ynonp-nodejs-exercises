@@ -33,15 +33,12 @@ const postSchema = new mongoose.Schema({
 
 postSchema.statics.countTopics = function(posts) {
     const {topicsCounted} = prepareTopics(posts);
-    console.log('statics topicsCounted = ', topicsCounted);
     return topicsCounted;
 };
 
 postSchema.query.prepareTopics = async function() {
     const posts = await this;
     const {topicsCounted, uniqueTopicsList} = prepareTopics(posts);
-    console.log('query topicsCounted = ', topicsCounted);
-    console.log('query uniqueTopicsList = ', uniqueTopicsList);
     posts.topicsCounted = topicsCounted;
     posts.sortedTopicsList = uniqueTopicsList.sort( Topic.compareTopics );
     return posts;

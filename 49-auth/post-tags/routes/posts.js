@@ -26,8 +26,15 @@ router.get('/new',
 // GET /posts
 router.get('/', async function(req, res, next) {
     const authorFilterObj = await getAuthorFilterObj(req);
+    const permittedPostsFilterObj = getPermittedUsersFilterObj(req);
+    const postsComposedFilter = {
+        $and: [
+            authorFilterObj,
+            permittedPostsFilterObj,
+        ],
+    };
 
-    const filteredPosts = await Post.find(authorFilterObj);
+    const filteredPosts = await Post.find(postsComposedFilter);
     const totalRecords = filteredPosts.length;
     const {
         itemsPerPage,
@@ -35,7 +42,7 @@ router.get('/', async function(req, res, next) {
         offset,
     } = getPaginationData(req,totalRecords);
 
-    const posts = await Post.find(authorFilterObj)
+    const posts = await Post.find(postsComposedFilter)
         .sort({ _id: -1 })
         .skip(offset)
         .limit(itemsPerPage)
@@ -58,7 +65,6 @@ router.get('/', async function(req, res, next) {
             totalPages,
             username: req.query.username ?? "",
             url: function(page) {
-                console.log(this);
                 return `/posts?page=${page}&username=${this.username}`
             },
         }
@@ -73,15 +79,15 @@ router.get('/', async function(req, res, next) {
  * to add to created post document.
  */
 router.post('/', async function(req, res, next) {
-    const {text, color, topics: topicsStr} = req.body;
+    const {text, color, topics: topicsStr, isGuarded, permittedUsers: permittedUsersStr} = req.body;
     const post = new Post({author: req.user._id, text, color});
     try {
         post.topics = Boolean(topicsStr) ? await Topic.getTopicsIds(topicsStr) : [];
+        post.isGuarded = Boolean(isGuarded);
+        post.permittedUsers = Boolean(isGuarded) ? await User.getPermittedUsersIds(permittedUsersStr) : [];
         await post.save();
         res.redirect('/posts');
     } catch (err) {
-        console.log(err);
-        console.log(post);
         res.render('posts/new', { post: post, user: req.user });
     }
 });
@@ -105,6 +111,16 @@ async function getAuthorFilterObj(req)
     }
 
     return authorFilterObj;
+}
+
+function getPermittedUsersFilterObj(req)
+{
+    return { $or:
+            [
+                { isGuarded: false },
+                { author: req.user._id },
+                { permittedUsers: req.user._id }
+            ] };
 }
 
 module.exports = router;

@@ -32,4 +32,16 @@ userSchema.methods.checkPassword = function(candidatePassword) {
     })
 };
 
+userSchema.statics.getPermittedUsersIds = async function(permittedUsersStr)
+{
+    if( !Boolean(permittedUsersStr)) {
+        return [];
+    }
+    const permittedUsersNamesArray = permittedUsersStr.split(',')
+        .map(name => name.trim());
+    return await this.find({
+        name : { $in : permittedUsersNamesArray}
+    });
+}
+
 module.exports = mongoose.model('User', userSchema);

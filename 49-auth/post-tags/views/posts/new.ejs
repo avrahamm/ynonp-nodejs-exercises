@@ -32,21 +32,43 @@
                 <input type="color" name="color" value="<%= post.color %>" />
             </label>
         </div>
+
+        <br/>
+
         <div>
-            <label>
+            <label for="topics">
                 Topics - separated by comma:
-                <input type="text" name="topics" value=""/>
+                <input id="topics" type="text" name="topics" value=""/>
             </label>
         </div>
 
         <div>
-            <label>
+            <input type="checkbox" name="isGuarded" id="isGuarded">
+            <label for="isGuarded">Private post mode</label>
+        </div>
+
+        <div id="permittedUsersDiv" style="display: none;">
+            <label for="permittedUsers">
                 Permitted Usernames - separated by comma:
-                <input type="text" name="permittedUsers" value=""/>
+                <input id="permittedUsers" type="text" name="permittedUsers"
+                       style="width: 150px; height: 25px;"
+                       value="" placeholder="u1,u2,u3..."/>
             </label>
         </div>
         <input type="submit" value="Create" />
     </form>
+        <script>
+            const privateModeCheckbox = document.querySelector('#isGuarded');
+            const permittedUsersDiv = document.querySelector('#permittedUsersDiv');
+            privateModeCheckbox.addEventListener('click', function(e) {
+                if (this.checked) {
+                    permittedUsersDiv.style.display = 'block';
+                }
+                else {
+                    permittedUsersDiv.style.display = "none";
+                }
+            })
+        </script>
 </body>
 
 </html>
