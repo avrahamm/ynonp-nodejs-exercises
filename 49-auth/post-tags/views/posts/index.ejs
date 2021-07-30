@@ -18,6 +18,8 @@
 
         .feed .author {
             font-weight: bold;
+            width:10%;
+            margin-left: 20px;
         }
 
         .feed .author::after {
@@ -27,7 +29,9 @@
 
 
 <body>
+<% if ( Boolean(user) ) { %>
     <a href='/posts/new'>New Message</a>
+<% } %>
 
     <form action="/posts" method="GET">
         <div>
@@ -60,7 +64,7 @@
     <ul class="feed">
     <% for (let post of posts) { %>
         <li>
-            <span class="author" style="width:10%; margin-left: 20px;"><%= post.author.name %></span>
+            <span class="author"><%= post.author.name %></span>
             <span class="text" style="width:20%; margin-left: 20px;color: <%= post.color %>">
                 <%= post.text %>
             </span>
@@ -69,6 +73,11 @@
                         .map( topic => topic.name)
                         .join(',') %>
             </span>
+            <% if ( Boolean(user) && ( user._id.toString() === post.author._id.toString() ) ) { %>
+                <span class="text" style="width:20%; margin-left: 20px;">
+                    <a href="<%= `/posts/${post._id}/edit`%>" >Edit</a>
+                </span>
+            <% } %>
         </li>
     <% } %>
     </ul>

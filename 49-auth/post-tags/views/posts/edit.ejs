@@ -39,7 +39,6 @@
                 Topics - separated by comma:
                 <input id="topics" type="text" name="topics" value="<%= post.topics
                         .map( topic => {
-                            console.log(topic);
                             return topic.name;
                         })
                         .join(',') %>"/>
