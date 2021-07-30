@@ -6,7 +6,12 @@ const Post = require('../models/post');
 const Topic = require('../models/topic');
 const User = require('../models/user');
 
-const {getPaginationData, ensurePostOwner} = require('../lib/utils');
+const {
+    getPaginationData,
+    ensurePostOwner,
+    getPermittedUsersFilterObj,
+    getAuthorFilterObj,
+} = require('../lib/utils');
 
 router.get(['/new'],
     ensureLoggedIn('/sessions/new'),
@@ -168,44 +173,5 @@ router.put('/:id', async function(req, res, next) {
         res.render(`posts/${req.params.id}/edit`, { post: post, user: req.user });
     }
 });
-
-/**
- * TODO-IDEA! To optimize with Redis
- * @link:https://epsagon.com/development/using-redis-to-optimize-mongodb-queries/
- * @param req
- * @returns {Promise<{}>}
- */
-async function getAuthorFilterObj(req)
-{
-    const authorFilterObj = {};
-    let filteredUser = null;
-    const usernameFilter = req.query.username;
-    if ( Boolean(usernameFilter)) {
-        filteredUser = await User.findOne({ name: usernameFilter });
-        if ( Boolean(filteredUser) ) {
-            authorFilterObj.author = filteredUser;
-        }
-    }
-
-    return authorFilterObj;
-}
-
-/**
- * @link:https://stackoverflow.com/questions/36666726/get-results-from-two-or-queries-with-and-in-mongoose
- * @param req
- * @returns {{$or: [{isGuarded: boolean}, {author}, {permittedUsers}]}}
- */
-function getPermittedUsersFilterObj(req)
-{
-    if (!Boolean(req.user)) {
-        return { isGuarded: Boolean(false) };
-    }
-    return { $or:
-            [
-                { isGuarded: Boolean(false) },
-                { author: req.user._id },
-                { permittedUsers: req.user._id }
-            ] };
-}
 
 module.exports = router;
