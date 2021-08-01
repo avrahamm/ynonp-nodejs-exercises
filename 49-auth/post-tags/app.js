@@ -11,6 +11,8 @@ var usersRouter = require('./routes/users');
 var sessionsRouter = require('./routes/sessions');
 var postsRouter = require('./routes/posts');
 var topicsRouter = require('./routes/topics');
+var tokensRouter = require('./routes/tokens');
+var apiRouter = require('./routes/api');
 
 const passport = require('passport');
 const flash = require('connect-flash');
@@ -56,6 +58,8 @@ app.use('/users', usersRouter);
 app.use('/sessions', sessionsRouter);
 app.use('/posts', postsRouter);
 app.use('/topics', topicsRouter);
+app.use('/tokens', tokensRouter);
+app.use('/api/v1.0/', apiRouter);
 
 
 // catch 404 and forward to error handler
