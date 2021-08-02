@@ -6,6 +6,24 @@ const Post = require('../models/post');
 const Topic = require('../models/topic');
 const User = require('../models/user');
 
+const multer = require('multer');
+const postPhotoUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 2 * 1024 * 1024,
+    },
+    fileFilter: function (req, file, cb) {
+        const fname = file.originalname;
+        const valid = [
+            '.jpg',
+            '.png',
+            '.jpeg',
+            '.jpg',
+        ].find(ext => fname.endsWith(ext));
+        cb(null, valid);
+    }
+}).single('postpic');
+
 const {
     getPaginationData,
     ensurePostOwner,
@@ -93,6 +111,25 @@ router.get('/', async function (req, res, next) {
     }
 });
 
+router.get('/:id', async function(req, res, next) {
+    try {
+        const post = await Post.findById(req.params.id)
+            .populate({
+                path: "topics",
+                select: "_id name weight",
+                model: Topic,
+            })
+            .populate({
+                path: "permittedUsers",
+                select: "_id name",
+                model: User,
+            });
+        res.render('posts/item', { post: post, user: req.user });
+    } catch (err) {
+        console.log(err);
+        return next(createError(err));
+    }
+});
 
 // GET: edit post
 router.get('/:id/edit', async function(req, res, next) {
@@ -115,15 +152,26 @@ router.get('/:id/edit', async function(req, res, next) {
     }
 });
 
+router.get('/:id/img', async function(req, res, next) {
+    const post = await Post.findById(req.params.id);
+    res.end(post.image);
+});
+
 /**
  * POST /posts
  *
  * First finds or creates topics ids
  * to add to created post document.
  */
-router.post('/', async function(req, res, next) {
-    const {text, color, topics: topicsStr, isGuarded, permittedUsers: permittedUsersStr} = req.body;
-    const post = new Post({author: req.user._id, text, color});
+router.post('/', postPhotoUpload, async function(req, res, next) {
+    const {text, color, topics: topicsStr, isGuarded,
+        permittedUsers: permittedUsersStr} = req.body;
+    let image = null;
+    if (req.file) {
+        console.log('router.post/posts/, req.file.originalname = ',req.file.originalname);
+        image = req.file.buffer;
+    }
+    const post = new Post({author: req.user._id, text, color, image});
     try {
         post.topics = Boolean(topicsStr) ? await Topic.getTopicsIds(topicsStr) : [];
         post.isGuarded = Boolean(isGuarded);
@@ -135,7 +183,7 @@ router.post('/', async function(req, res, next) {
     }
 });
 
-router.put('/:id', async function(req, res, next) {
+router.put('/:id', postPhotoUpload, async function(req, res, next) {
     const {text, color, topics: topicsStr, isGuarded, permittedUsers: permittedUsersStr} = req.body;
     let post = null;
     try {
@@ -167,10 +215,14 @@ router.put('/:id', async function(req, res, next) {
                 post.permittedUsers = await User.getPermittedUsersIds(permittedUsersStr);
             }
         }
+        if (req.file) {
+            console.log('router.put/posts/:id, req.file = ',req.file);
+            post.image = req.file.buffer;
+        }
         await post.save();
         res.redirect('/posts');
     } catch (err) {
-        res.render(`posts/${req.params.id}/edit`, { post: post, user: req.user });
+        res.render(`posts/edit`, { post: post, user: req.user });
     }
 });
 

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Post Details</title>
+</head>
+
+<body>
+    <div>
+        <span class="text" style="width:20%; margin-left: 20px;">
+            <a href="<%= `/posts/` %>">Posts</a>
+        </span>
+    </div>
+
+    <br/>
+
+    <div>
+        <label for="postText">
+            <span> text</span> <br/>
+            <%= user.name %>:
+            <textarea id="postText" name="text" disabled><%= post.text %></textarea>
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Color:
+            <input type="color" name="color" value="<%= post.color %>" disabled/>
+        </label>
+    </div>
+
+    <br/>
+
+    <div>
+        <label for="topics">
+            Topics - separated by comma:
+            <input id="topics" type="text" name="topics" value="<%= post.topics
+                    .map(topic => {
+                        return topic.name;
+                    })
+                    .join(',') %>"
+                   disabled/>
+        </label>
+    </div>
+
+    <div>
+        <input type="checkbox" name="isGuarded" id="isGuarded"
+                <%= post.isGuarded ? 'checked' : '' %>
+               disabled/>
+        <label for="isGuarded">Private post mode</label>
+    </div>
+
+    <div id="permittedUsersDiv" style="display: <%= post.isGuarded ? 'block' : 'none' %>;">
+        <label for="permittedUsers">
+            Permitted Usernames - separated by comma:
+            <input id="permittedUsers" type="text" name="permittedUsers"
+                   style="width: 150px; height: 25px;"
+                   value="<%= post.permittedUsers
+                           .map(user => user.name)
+                           .join(',') %>"
+                   placeholder="u1,u2,u3..." disabled/>
+        </label>
+    </div>
+
+    <% if (post.image) { %>
+        <div>
+            <img src="/posts/<%= post.id %>/img" alt="postpic" />
+        </div>
+    <% } %>
+
+    <br>
+    <% if ( Boolean(user) && (user._id.toString() === post.author._id.toString()) ) { %>
+        <span class="text" style="width:20%; margin-left: 20px;">
+                        <a href="<%= `/posts/${post._id}/edit` %>">Edit</a>
+                    </span>
+    <% } %>
+
+</body>
+
+</html>

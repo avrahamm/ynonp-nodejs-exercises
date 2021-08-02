@@ -41,6 +41,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+
 // app.use(/^[^.]+$/, debugMiddleware);
 // override with POST having query string _method=DELETE in url.
 // @link:http://expressjs.com/en/resources/middleware/method-override.html

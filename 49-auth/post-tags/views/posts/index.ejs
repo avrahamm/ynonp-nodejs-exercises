@@ -73,6 +73,9 @@
                         .map( topic => topic.name)
                         .join(',') %>
             </span>
+            <span class="text" style="width:20%; margin-left: 20px;">
+                    <a href="<%= `/posts/${post._id}`%>" >Open</a>
+            </span>
             <% if ( Boolean(user) && ( user._id.toString() === post.author._id.toString() ) ) { %>
                 <span class="text" style="width:20%; margin-left: 20px;">
                     <a href="<%= `/posts/${post._id}/edit`%>" >Edit</a>

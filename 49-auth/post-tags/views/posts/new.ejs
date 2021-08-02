@@ -17,7 +17,7 @@
         <% } %>
     
 
-    <form action="/posts" method="POST">
+    <form action="/posts" method="POST" enctype="multipart/form-data">
         <div>
             <label for="postText">
                 <span> text</span> <br/>
@@ -55,6 +55,14 @@
                        value="" placeholder="u1,u2,u3..."/>
             </label>
         </div>
+
+        <div>
+            <label>
+                Image:
+                <input type="file" name="postpic" accept="image/*" />
+            </label>
+        </div>
+
         <input type="submit" value="Create" />
     </form>
         <script>

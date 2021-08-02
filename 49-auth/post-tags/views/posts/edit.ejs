@@ -15,7 +15,7 @@
             </ul>
         <% } %>
 
-    <form method="POST" action="<%= `/posts/${post._id}` %>" >
+    <form method="POST" action="<%= `/posts/${post._id}` %>" enctype="multipart/form-data" >
         <input type="hidden" name="_method" value="PUT"/>
         <div>
             <label for="postText">
@@ -63,6 +63,20 @@
                        placeholder="u1,u2,u3..."/>
             </label>
         </div>
+
+            <% if (post.image) { %>
+                <div>
+                    <img src="/posts/<%= post.id %>/img" alt="postpic"/>
+                </div>
+            <% } %>
+
+        <div>
+            <label>
+                Image:
+                <input type="file" name="postpic" accept="image/*" />
+            </label>
+        </div>
+
         <input type="submit" value="Save" />
     </form>
         <script>
