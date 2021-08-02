@@ -6,24 +6,6 @@ const Post = require('../models/post');
 const Topic = require('../models/topic');
 const User = require('../models/user');
 
-const multer = require('multer');
-const postPhotoUpload = multer({
-    storage: multer.memoryStorage(),
-    limits: {
-        fileSize: 2 * 1024 * 1024,
-    },
-    fileFilter: function (req, file, cb) {
-        const fname = file.originalname;
-        const valid = [
-            '.jpg',
-            '.png',
-            '.jpeg',
-            '.jpg',
-        ].find(ext => fname.endsWith(ext));
-        cb(null, valid);
-    }
-}).single('postpic');
-
 const {
     getPaginationData,
     ensurePostOwner,
@@ -163,7 +145,7 @@ router.get('/:id/img', async function(req, res, next) {
  * First finds or creates topics ids
  * to add to created post document.
  */
-router.post('/', postPhotoUpload, async function(req, res, next) {
+router.post('/',  async function(req, res, next) {
     const {text, color, topics: topicsStr, isGuarded,
         permittedUsers: permittedUsersStr} = req.body;
     let image = null;
@@ -183,7 +165,7 @@ router.post('/', postPhotoUpload, async function(req, res, next) {
     }
 });
 
-router.put('/:id', postPhotoUpload, async function(req, res, next) {
+router.put('/:id', async function(req, res, next) {
     const {text, color, topics: topicsStr, isGuarded, permittedUsers: permittedUsersStr} = req.body;
     let post = null;
     try {
@@ -216,11 +198,10 @@ router.put('/:id', postPhotoUpload, async function(req, res, next) {
             }
         }
         if (req.file) {
-            console.log('router.put/posts/:id, req.file = ',req.file);
             post.image = req.file.buffer;
         }
         await post.save();
-        res.redirect('/posts');
+        res.redirect(`/posts/${req.params.id}`);
     } catch (err) {
         res.render(`posts/edit`, { post: post, user: req.user });
     }

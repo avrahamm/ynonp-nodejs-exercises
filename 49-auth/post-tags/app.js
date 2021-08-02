@@ -41,7 +41,24 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+const multer = require('multer');
+const postPhotoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 2 * 1024 * 1024,
+  },
+  fileFilter: function (req, file, cb) {
+    const fname = file.originalname;
+    const valid = [
+      '.jpg',
+      '.png',
+      '.jpeg'
+    ].find(ext => fname.endsWith(ext));
+    cb(null, valid);
+  }
+}).single('postpic');
 
+app.use(postPhotoUpload);
 // app.use(/^[^.]+$/, debugMiddleware);
 // override with POST having query string _method=DELETE in url.
 // @link:http://expressjs.com/en/resources/middleware/method-override.html
