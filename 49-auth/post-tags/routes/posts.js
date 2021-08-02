@@ -207,4 +207,15 @@ router.put('/:id', async function(req, res, next) {
     }
 });
 
+router.delete('/:id', async function(req, res, next) {
+    try {
+        await Post.deleteOne({ _id: req.params.id });
+        res.redirect(`/posts`);
+    }
+    catch (e) {
+        console.log(err);
+        return next(createError(err));
+    }
+});
+
 module.exports = router;

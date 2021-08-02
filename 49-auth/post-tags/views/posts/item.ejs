@@ -75,6 +75,14 @@
                     </span>
     <% } %>
 
+    <span data-post-id="<%= `${post._id}`%>" class="text deleteLink" style="width:20%; margin-left: 20px;">
+                    <a href="javascript:void(0);" >Delete</a>
+                </span>
+    <form id="delete-post-<%= `${post._id}`%>" method="post" action="<%= `/posts/${post._id}`%>" style="display: none;">
+        <input type="hidden" name="_method" value="DELETE"/>
+        <input type="submit" value="Delete" />
+    </form>
+    <script src="/js/delete-post.js"></script>
 </body>
 
 </html>
