@@ -31,6 +31,11 @@ router.put(['/:id'],
     ensurePostOwner({failedRedirect: '/posts'}),
 );
 
+router.delete(['/:id'],
+    ensureLoggedIn('/sessions/new'),
+    ensurePostOwner({failedRedirect: '/posts'}),
+);
+
 // GET /posts/new
 router.get('/new',
     async function(req, res, next) {
@@ -63,16 +68,16 @@ router.get('/', async function (req, res, next) {
             .sort({_id: -1})
             .skip(offset)
             .limit(itemsPerPage)
+            .populate({
+                path: "author",
+                select: "_id name email",
+                model: User,
+            })
             // .populate('topics')
             .populate({
                 path: "topics",
                 select: "_id name weight",
                 model: Topic,
-            })
-            .populate({
-                path: "author",
-                select: "_id name email",
-                model: User,
             })
             .prepareTopics();
 
@@ -97,6 +102,11 @@ router.get('/:id', async function(req, res, next) {
     try {
         const post = await Post.findById(req.params.id)
             .populate({
+                path: "author",
+                select: "_id name email",
+                model: User,
+            })
+            .populate({
                 path: "topics",
                 select: "_id name weight",
                 model: Topic,
@@ -106,7 +116,7 @@ router.get('/:id', async function(req, res, next) {
                 select: "_id name",
                 model: User,
             });
-        res.render('posts/item', { post: post, user: req.user });
+        res.render('posts/item', { post: post, user: req.user ?? null });
     } catch (err) {
         console.log(err);
         return next(createError(err));

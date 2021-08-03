@@ -93,7 +93,9 @@
     </ul>
 
     <%- include('../paginate', { paginate: pagination }) %>
-    <script src="/js/delete-post.js"></script>
+    <% if ( Boolean(user) ) { %>
+        <script src="/js/delete-post.js"></script>
+    <% } %>
 </body>
 
 </html>
